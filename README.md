@@ -13,7 +13,7 @@ Termitary ships a single `:Termitary` command with a few subcommands:
 | name             | action                                                   |
 | ---------------- | -------------------------------------------------------- |
 | `activate`       | Set the current terminal buffer to work with Termitary   |
-| `execute {text}` | Send some `{text}` to the active terminal with a newline |
+| `execute {text}` | Send some `{text}` to the active terminal with a `<CR>`  |
 | `new`            | Open a new terminal buffer and `activate` it             |
 | `paste`          | Send contents of the `"` register to the terminal buffer |
 | `repeat`         | Emulate pressing `<Up><CR>` in the terminal buffer       |
