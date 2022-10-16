@@ -44,8 +44,10 @@ active terminal buffer: `:%Termitary send`.
 Configuration
 -------------
 
-The default command name is `Termitary` but you can change it by setting
-the `command_name` option in the `setup()` function, for example to `T`. You can also redefine the default `:T new` behavior by setting a `custom_new` function:
+Both the command name and the how `new` works can be changed  in the
+`setup` function. In this example we will remap the command name from
+the default `Termitary` to `T` and add an integration with the
+[FTerm](https://github.com/numtostr/FTerm.nvim) floating terminal plugin:
 
 ```lua
 require('termitary').setup({
