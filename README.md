@@ -45,10 +45,13 @@ Configuration
 -------------
 
 The default command name is `Termitary` but you can change it by setting
-the `command_name` option in the `setup()` function, for example to `T`:
+the `command_name` option in the `setup()` function, for example to `T`. You can also redefine the default `:T new` behavior by setting a `custom_new` function:
 
 ```lua
 require('termitary').setup({
-  command_name = 'T'
+  command_name = 'T',
+  custom_new = function()
+    require('FTerm').open()
+  end
 })
 ```

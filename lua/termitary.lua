@@ -1,6 +1,7 @@
 local M = {}
 
 M.state = {
+  custom_new  = nil,
   terminal_id = nil
 }
 
@@ -24,9 +25,15 @@ M.run = function(args)
   end
 
   if subcommand == 'new' then
-    vim.api.nvim_command('terminal')
-    vim.api.nvim_command('norm G')
+    if M.state.custom_new == nil then
+      vim.api.nvim_command('terminal')
+      vim.api.nvim_command('norm G')
+    else
+      M.state.custom_new()
+    end
+
     M.state.terminal_id = vim.b.terminal_job_id
+
     return true
   end
 
@@ -81,7 +88,7 @@ M.run = function(args)
   return false
 end
 
-M.setup = function(opts)
+M.setup = function(options)
   local completion = function()
     return {
       'activate',
@@ -93,12 +100,16 @@ M.setup = function(opts)
     }
   end
 
-  if opts.command_name == nil then
-    opts.command_name = 'Termitary'
+  if options.command_name == nil then
+    options.command_name = 'Termitary'
+  end
+
+  if options.custom_new ~= nil then
+    M.state.custom_new = options.custom_new
   end
 
   return vim.api.nvim_create_user_command(
-    opts.command_name,
+    options.command_name,
     function(args) M.run(args) end,
     {nargs = '*', complete = completion, range = true}
   )
