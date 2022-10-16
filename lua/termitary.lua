@@ -31,12 +31,22 @@ M.run = function(args)
 
   -- The following subcommands require a terminal_id
   if M.state.terminal_id == nil then
-    print('Error: no terminal is active.')
+    print('Error: no terminal is active')
     return false
   end
 
   if subcommand == 'execute' then
-    return vim.api.nvim_chan_send(M.state.terminal_id, args.args .. '\r')
+    if #args.fargs <= 0 then
+      print('Error: nothing to execute')
+    end
+
+    for _, line in ipairs(args.fargs) do
+      vim.api.nvim_chan_send(M.state.terminal_id, line)
+    end
+
+    vim.api.nvim_chan_send(M.state.terminal_id, '\r')
+
+    return true
   end
 
   if subcommand == 'repeat' then
