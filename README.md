@@ -4,6 +4,25 @@ termitary.nvim
 ![Drawing of a termitary](./termitary.jpg)
 
 Termitary is a simple Neovim plugin for interacting with terminal buffers.
+Termitary hooks into any terminal buffer—native or provided by another
+plugin—and provides a remote control interface. With Termitary, there is 
+no need to jump across buffers to re-run some test. Just bind a key
+to `:Termitary repeat` and get your test results as you go along. You
+can also yank and paste into the terminal without switching buffers,
+send a visual selection, or pass a range of lines.
+
+Installation
+------------
+
+Using [Packer](https://github.com/wbthomason/packer.nvim):
+```lua
+use({
+  'https://github.com/nat-418/termitary.nvim',
+  config = function()
+    require('termitary').setup()
+  end
+})
+```
 
 Usage
 -----
@@ -22,26 +41,13 @@ Termitary ships a single `:Termitary` command with a few subcommands:
 For example, to send the contents of some buffer to a REPL running in the
 active terminal buffer: `:%Termitary send`.
 
-Installation
-------------
-
-Using [Packer](https://github.com/wbthomason/packer.nvim):
-```lua
-use({
-  'https://github.com/nat-418/termitary.nvim',
-  config = function()
-    require('termitary').setup()
-  end
-})
-```
-
 Configuration
 -------------
 
 The default command name is `Termitary` but you can change it by setting
-the `command_name` option in the `setup()` function, for example to `:T`:
+the `command_name` option in the `setup()` function, for example to `T`:
 
-```
+```lua
 require('termitary').setup({
   command_name = 'T'
 })
