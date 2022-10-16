@@ -1,6 +1,8 @@
 termitary.nvim
 ==============
 
+![Drawing of a termitary](./termitary.jpg)
+
 Termitary is a simple Neovim plugin for interacting with terminal buffers.
 
 Usage
