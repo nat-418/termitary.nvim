@@ -10,7 +10,7 @@ Usage
 
 Termitary ships a single `:Termitary` command with a few subcommands:
 
-| subcommand name  | action                                                   |
+| name             | action                                                   |
 | ---------------- | -------------------------------------------------------- |
 | `activate`       | Set the current terminal buffer to work with Termitary   |
 | `execute {text}` | Send some `{text}` to the active terminal with a newline |
