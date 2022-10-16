@@ -25,6 +25,7 @@ M.run = function(args)
 
   if subcommand == 'new' then
     vim.api.nvim_command('terminal')
+    vim.api.nvim_command('norm G')
     M.state.terminal_id = vim.b.terminal_job_id
     return true
   end
@@ -38,10 +39,11 @@ M.run = function(args)
   if subcommand == 'execute' then
     if #args.fargs <= 0 then
       print('Error: nothing to execute')
+      return false
     end
 
-    for _, line in ipairs(args.fargs) do
-      vim.api.nvim_chan_send(M.state.terminal_id, line)
+    for _, word in ipairs(args.fargs) do
+      vim.api.nvim_chan_send(M.state.terminal_id, word .. ' ')
     end
 
     vim.api.nvim_chan_send(M.state.terminal_id, '\r')
