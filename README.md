@@ -73,6 +73,7 @@ require('termitary').setup({
       vim.cmd('botright 10new')
       vim.cmd('terminal')
       termitary.activate()
+      vim.cmd('normal G')
       vim.cmd('wincmd p')
     end
   })
