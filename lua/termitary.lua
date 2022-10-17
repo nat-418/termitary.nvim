@@ -21,7 +21,7 @@ end
 -- Open a new terminal buffer and activate it
 M.new = function()
   vim.api.nvim_command('terminal')
-  M.activate()
+  return M.activate()
 end
 
 -- Send contents of a register to the active terminal buffer
@@ -73,9 +73,9 @@ M.run = function(args)
 
   local subcommand = table.remove(args.fargs, 1) -- Note: mutating `fargs` table
 
-  if subcommand == nil        then return false   end -- Bail if bad input
-  if subcommand == 'activate' then M.activate()   end
-  if subcommand == 'new'      then return M.new() end
+  if subcommand == nil        then return false        end -- Bail if bad input
+  if subcommand == 'activate' then return M.activate() end
+  if subcommand == 'new'      then return M.new()      end
 
   -- The following subcommands require a terminal_id
   if M.state.terminal_id == nil then
