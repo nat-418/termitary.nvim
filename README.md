@@ -32,11 +32,11 @@ Termitary ships a single `:Termitary` command with a few subcommands:
 | name             | action                                                   |
 | ---------------- | -------------------------------------------------------- |
 | `activate`       | Set the current terminal buffer to work with Termitary   |
-| `execute {text}` | Send some `{text}` to the active terminal with a `<CR>`  |
 | `new`            | Open a new terminal buffer and `activate` it             |
 | `paste`          | Send contents of the `"` register to the terminal buffer |
-| `repeat`         | Emulate pressing `<Up><CR>` in the terminal buffer       |
+| `repeat`         | Emulate typing `<Up><CR>` in the terminal buffer         |
 | `{range}send`    | Put some `{range}` of the current buffer in the terminal |
+| `type {text}`    | Send some `{text}` to the active terminal with a `<CR>`  |
 
 For example, to send the contents of some buffer to a REPL running in the
 active terminal buffer: `:%Termitary send`.
@@ -51,10 +51,14 @@ the default `Termitary` to `T` and add an integration with the
 
 ```lua
 require('termitary').setup({
-  command_name = 'T',
-  custom_new = function()
-    require('FTerm').open()
-  end
+  local termitary = require('termitary')
+  termitary.setup({
+    command_name = 'T',
+    custom_new = function()
+      require('FTerm').open()
+      termitary.activate()
+    end
+  })
 })
 ```
 
@@ -62,14 +66,15 @@ Or to open a new native terminal ten lines tall under the current buffer:
 
 ```lua
 require('termitary').setup({
-  command_name = 'T',
-  custom_new = function()
-    vim.cmd({
-      'botright 10new',
-      'terminal',
-      'wincmd p'
-    })
-  end
+  local termitary = require('termitary')
+  termitary.setup({
+    command_name = 'T',
+    custom_new = function()
+      vim.cmd('botright 10new')
+      vim.cmd('terminal')
+      termitary.activate()
+      vim.cmd('wincmd p')
+    end
+  })
 })
 ```
-

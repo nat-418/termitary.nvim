@@ -5,6 +5,11 @@ M.state = {
   terminal_id = nil
 }
 
+M.activate = function()
+  M.state.terminal_id = vim.b.terminal_job_id
+  return true
+end
+
 M.run = function(args)
   if args == nil then return false end
 
@@ -28,13 +33,13 @@ M.run = function(args)
     if M.state.custom_new == nil then
       vim.api.nvim_command('terminal')
       vim.api.nvim_command('norm G')
+      M.activate()
+      return true
     else
-      M.state.custom_new()
+      return M.state.custom_new()
     end
 
-    M.state.terminal_id = vim.b.terminal_job_id
-
-    return true
+    return false
   end
 
   -- The following subcommands require a terminal_id
@@ -43,9 +48,9 @@ M.run = function(args)
     return false
   end
 
-  if subcommand == 'execute' then
+  if subcommand == 'type' then
     if #args.fargs <= 0 then
-      print('Error: nothing to execute')
+      print('Error: nothing to type')
       return false
     end
 
@@ -92,7 +97,7 @@ M.setup = function(options)
   local completion = function()
     return {
       'activate',
-      'execute',
+      'type',
       'new',
       'paste',
       'repeat',
@@ -108,11 +113,13 @@ M.setup = function(options)
     M.state.custom_new = options.custom_new
   end
 
-  return vim.api.nvim_create_user_command(
+  vim.api.nvim_create_user_command(
     options.command_name,
     function(args) M.run(args) end,
     {nargs = '*', complete = completion, range = true}
   )
+
+  return true
 end
 
 return M
