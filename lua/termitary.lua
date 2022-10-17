@@ -1,43 +1,80 @@
 local M = {}
 
 M.state = {
-  custom_new  = nil,
-  terminal_id = nil
+  custom_new  = nil, -- Allow a user to write their own `new` function at setup
+  last_sent   = nil, -- Used by the `repeat` subcommand
+  terminal_id = nil  -- Set by the `activate` function
 }
 
+-- Use the current terminal buffer
 M.activate = function()
+  if vim.b.terminal_job_id == nil then
+    print('Error: not in a terminal buffer')
+    return false
+  end
+
   M.state.terminal_id = vim.b.terminal_job_id
+
   return true
 end
 
-M.run = function(args)
-  if args == nil then return false end
+-- Send text with a newline
+M.type = function(words)
+  M.state.last_sent = ''
 
-  -- Warning: mutating fargs table
-  local subcommand = table.remove(args.fargs, 1)
-
-  if subcommand == nil then return false end
-
-  if subcommand == 'activate' then
-    M.state.terminal_id = vim.b.terminal_job_id
-
-    if M.state.terminal_id == nil then
-      print('Error: not in a terminal buffer')
-      return false
-    end
-
-    return true
+  for _, word in ipairs(words) do
+    local with_space = word .. ' '
+    vim.api.nvim_chan_send(M.state.terminal_id, word .. ' ')
+    M.state.last_sent = M.state.last_sent .. with_space
   end
 
+  vim.api.nvim_chan_send(M.state.terminal_id, '\r')
+  M.state.last_sent = M.state.last_sent .. '\r'
+
+  return true
+end
+
+-- Send raw lines of text
+M.send = function(lines)
+  M.state.last_sent = ''
+
+  for _, line in ipairs(lines) do
+    local with_newline = line .. '\r'
+    vim.api.nvim_chan_send(M.state.terminal_id, with_newline)
+    M.state.last_sent = M.state.last_sent .. with_newline
+  end
+
+  return true
+end
+
+-- Send the last sent text again (repeat alone is a reserved word in Lua)
+M.repeater = function()
+  vim.api.nvim_chan_send(M.state.terminal_id, M.state.last_sent)
+  return true
+end
+
+-- Parse subcommands etc.
+M.run = function(args)
+  if args == nil then return false end -- Bail if bad input
+
+  local subcommand = table.remove(args.fargs, 1) -- Note: mutating `fargs` table
+
+  if subcommand == nil then return false end -- Bail if bad input
+
+  if subcommand == 'activate' then M.activate() end
+
   if subcommand == 'new' then
+    -- Default to a simple terminal split with scrollback
     if M.state.custom_new == nil then
       vim.api.nvim_command('terminal')
       vim.api.nvim_command('norm G')
+
       M.activate()
+
       return true
-    else
-      return M.state.custom_new()
     end
+
+    M.state.custom_new() -- Custom user function defined in `setup`
 
     return false
   end
@@ -54,19 +91,10 @@ M.run = function(args)
       return false
     end
 
-    for _, word in ipairs(args.fargs) do
-      vim.api.nvim_chan_send(M.state.terminal_id, word .. ' ')
-    end
-
-    vim.api.nvim_chan_send(M.state.terminal_id, '\r')
-
-    return true
+    return M.type(args.fargs)
   end
 
-  if subcommand == 'repeat' then
-    -- Send Up arrow code
-    return vim.api.nvim_chan_send(M.state.terminal_id, '\x1b\x5b\x41\r')
-  end
+  if subcommand == 'repeat' then return M.repeater() end
 
   if subcommand == 'send' then
     local selection = vim.api.nvim_buf_get_lines(
@@ -75,42 +103,33 @@ M.run = function(args)
       args.line2,
       {}
     )
-
-    for _, line in ipairs(selection) do
-      vim.api.nvim_chan_send(M.state.terminal_id, (line .. '\r'))
-    end
-
-    return true
+    return M.send(selection)
   end
 
   if subcommand == 'paste' then
-    return vim.api.nvim_chan_send(
-      M.state.terminal_id,
-      vim.fn.getreg('"')
-    )
+    local register_contents = vim.fn.getreg('"')
+    vim.api.nvim_chan_send(M.state.terminal_id, register_contents)
+    M.state.last_sent = register_contents
+    return true
   end
+
+  print('Error: invalid subcommand')
 
   return false
 end
 
 M.setup = function(options)
-  local completion = function()
-    return {
-      'activate',
-      'type',
-      'new',
-      'paste',
-      'repeat',
-      'send'
-    }
-  end
-
+  -- User configuration options
   if options.command_name == nil then
     options.command_name = 'Termitary'
   end
 
   if options.custom_new ~= nil then
     M.state.custom_new = options.custom_new
+  end
+
+  local completion = function()
+    return { 'activate', 'type', 'new', 'paste', 'repeat', 'send' }
   end
 
   vim.api.nvim_create_user_command(

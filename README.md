@@ -34,7 +34,7 @@ Termitary ships a single `:Termitary` command with a few subcommands:
 | `activate`       | Set the current terminal buffer to work with Termitary   |
 | `new`            | Open a new terminal buffer and `activate` it             |
 | `paste`          | Send contents of the `"` register to the terminal buffer |
-| `repeat`         | Emulate typing `<Up><CR>` in the terminal buffer         |
+| `repeat`         | Send what was sent last again                            |
 | `{range}send`    | Put some `{range}` of the current buffer in the terminal |
 | `type {text}`    | Send some `{text}` to the active terminal with a `<CR>`  |
 
