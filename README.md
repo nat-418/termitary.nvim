@@ -57,3 +57,19 @@ require('termitary').setup({
   end
 })
 ```
+
+Or to open a new native terminal ten lines tall under the current buffer:
+
+```lua
+require('termitary').setup({
+  command_name = 'T',
+  custom_new = function()
+    vim.cmd({
+      'botright 10new',
+      'terminal',
+      'wincmd p'
+    })
+  end
+})
+```
+
