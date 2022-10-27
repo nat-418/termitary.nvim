@@ -1,7 +1,5 @@
-termitary.nvim
-==============
-
-![Drawing of a termitary](./termitary.jpg)
+termitary.nvim 🐜
+=================
 
 Termitary is a simple Neovim plugin for interacting with terminal buffers.
 Termitary hooks into any terminal buffer—native or provided by another
