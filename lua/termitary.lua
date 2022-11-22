@@ -21,6 +21,7 @@ end
 -- Open a new terminal buffer and activate it
 M.new = function()
   vim.api.nvim_command('terminal')
+  vim.api.nvim_feedkeys('G', 't', false)
   return M.activate()
 end
 
