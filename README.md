@@ -12,14 +12,8 @@ send a visual selection, or pass a range of lines.
 Installation
 ------------
 
-Using [Packer](https://github.com/wbthomason/packer.nvim):
-```lua
-use({
-  'https://github.com/nat-418/termitary.nvim',
-  config = function()
-    require('termitary').setup()
-  end
-})
+```sh
+$ git clone --depth 1 https://github.com/nat-418/termitary.nvim ~/.local/share/nvim/site/pack/bufala/start/termitary.nvim
 ```
 
 Usage
