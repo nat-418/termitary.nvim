@@ -13,7 +13,7 @@ Installation
 ------------
 
 ```sh
-$ git clone --depth 1 https://github.com/nat-418/termitary.nvim ~/.local/share/nvim/site/pack/bufala/start/termitary.nvim
+$ git clone --depth 1 https://github.com/nat-418/termitary.nvim ~/.local/share/nvim/site/pack/termitary/start/termitary.nvim
 ```
 
 Usage
